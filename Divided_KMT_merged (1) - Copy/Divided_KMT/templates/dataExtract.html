@@ -620,7 +620,7 @@ function sendAIMessage() {
 
     // Word-boundary so it doesn't fire on words like "consume" or "assumption".
   const triggerRegex = /\b(summary|summarize|sum|review)\b/i;
-    const fieldQueryRegex = /\b(port\s+of\s+loading|loading\s+port|pol|pl|port\s+of\s+discharge|discharge\s+port|pod|gross\s+weight|gross\s+wt|weight|kg|gw|container\s+count|containers|cc|shipper|consignee|notify\s+party|notify)\b/i;
+    const fieldQueryRegex = /\b(port\s+of\s+loading|loading\s+port|port\s+loading|load\s+port|pol|pl|p\.o\.l|port\s+of\s+discharge|discharge\s+port|port\s+discharge|destination\s+port|pod|p\.o\.d|gross\s+weight|gross\s+wt|gross\s+wgt|grossweight|total\s+weight|cargo\s+weight|weight|kg|gw|g\.w|container\s+count|containers|container\s+qty|container\s+quantity|container\s+no|number\s+of\s+containers|no\s+of\s+containers|cntr\s+count|ctr\s+count|cnt\s+count|cc|shipper|shiper|shippr|shpr|exporter|consignee|consigne|consingee|consginee|cnee|notify\s+party|notify|notifyparty|notify\s+pty|np|n\/p)\b/i;
     if (!triggerRegex.test(text) || fieldQueryRegex.test(text)) {
         appendSystemMessage(getDataReply(text));
     return;
@@ -647,13 +647,13 @@ function sendAIMessage() {
 function getDataReply(text) {
     const query = text.toLowerCase();
     const fieldAliases = [
-        { name: 'Port of Loading', aliases: ['port of loading', 'loading port', 'pol', 'pl'] },
-        { name: 'Port of Discharge', aliases: ['port of discharge', 'discharge port', 'pod'] },
-        { name: 'Gross Weight (kg)', aliases: ['gross weight', 'gross wt', 'weight', 'kg', 'gw'] },
-        { name: 'Container Count', aliases: ['container count', 'containers', 'container number', 'cc'] },
-        { name: 'Shipper', aliases: ['shipper'] },
-        { name: 'Consignee', aliases: ['consignee'] },
-        { name: 'Notify Party', aliases: ['notify party', 'notify'] }
+        { name: 'Port of Loading', aliases: ['port of loading', 'loading port', 'port loading', 'load port', 'pol', 'pl', 'p.o.l'] },
+        { name: 'Port of Discharge', aliases: ['port of discharge', 'discharge port', 'port discharge', 'destination port', 'pod', 'p.o.d'] },
+        { name: 'Gross Weight (kg)', aliases: ['gross weight', 'gross wt', 'gross wgt', 'grossweight', 'total weight', 'cargo weight', 'weight', 'kg', 'gw', 'g.w'] },
+        { name: 'Container Count', aliases: ['container count', 'containers', 'container qty', 'container quantity', 'container number', 'container no', 'number of containers', 'no of containers', 'cntr count', 'ctr count', 'cnt count', 'cc'] },
+        { name: 'Shipper', aliases: ['shipper', 'shiper', 'shippr', 'shpr', 'exporter'] },
+        { name: 'Consignee', aliases: ['consignee', 'consigne', 'consingee', 'consginee', 'cnee'] },
+        { name: 'Notify Party', aliases: ['notify party', 'notify', 'notifyparty', 'notify pty', 'np', 'n/p'] }
     ];
     const requestedField = fieldAliases.find(field =>
         field.aliases.some(alias => new RegExp(`\\b${alias.replace(/ /g, '\\s+')}\\b`, 'i').test(query))
@@ -683,8 +683,11 @@ function getConversationalReply(text) {
     if (/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(message)) {
         return 'Hi! What would you like to check in the inbox today?';
     }
-    if (/\b(thanks|thank you|thx)\b/.test(message)) {
+    if (/\b(thanks|thank you|thx|tq)\b/.test(message)) {
         return 'You’re welcome. I’m here whenever you need another look at the inbox.';
+    }
+    if (/\b(ok|okay|alright|all good)\b/.test(message)) {
+        return 'Okay. Let me know what you would like to check next.';
     }
     if (/\b(how are you|how is it going)\b/.test(message)) {
         return 'I’m doing well and ready to help you review the inbox.';
