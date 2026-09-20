@@ -24,12 +24,6 @@ from email.utils import parseaddr
 # Import the categorizer from Averis
 from sorter import ShippingEmailCategorizer, EmailCategory
 
-system_prompt = """
-You are a strict deadline extraction tool.
-Your sole task is to extract assignment "due dates" from the provided text.
-You are strictly forbidden from extracting, analyzing, reading, or outputting any other context, personal information, or irrelevant data.
-If no due date is found, simply return "Not found" and do not make any assumptions or guesses.
-"""
 
 # ====================================================================
 # PART 1: Fetch emails (this replaces the old hardcoded fake inbox)
@@ -211,6 +205,42 @@ REQUIRED_FIELDS = [
 ]
 
 
+FIELD_ALIASES = {
+    "Shipper": [
+        "shipper", "shiper", "shippr", "shpr", "exporter",
+    ],
+    "Consignee": [
+        "consignee", "consigne", "consingee", "consginee", "cnee",
+    ],
+    "Notify Party": [
+        "notify party", "notify", "notifyparty", "notify pty", "np", "n/p",
+    ],
+    "Port of Loading": [
+        "port of loading", "loading port", "port loading", "load port",
+        "pol", "p.o.l", "p l",
+    ],
+    "Port of Discharge": [
+        "port of discharge", "discharge port", "port discharge", "destination port",
+        "pod", "p.o.d", "p d",
+    ],
+    "Container Count": [
+        "container count", "containers", "container qty", "container quantity",
+        "container no", "number of containers", "no of containers", "cntr count",
+        "ctr count", "cnt count", "cc",
+    ],
+    "Gross Weight (kg)": [
+        "gross weight (kg)", "gross weight kg", "gross weight", "gross wt",
+        "gross wgt", "grossweight", "total weight", "cargo weight", "weight",
+        "gw", "g.w.",
+    ],
+}
+
+
+def _normalize_field_label(label: str) -> str:
+    """Normalize spacing and punctuation so aliases can match reliably."""
+    return " ".join(label.lower().replace("&", "and").split())
+
+
 def extract_fields_from_text(text: str) -> dict:
     """
     Grab fields out of a plain-text attachment, following the
@@ -223,10 +253,11 @@ def extract_fields_from_text(text: str) -> dict:
         if ":" not in line:
             continue
         key, _, value = line.partition(":")
-        key = key.strip()
+        key = _normalize_field_label(key.strip())
         value = value.strip()
         for field in REQUIRED_FIELDS:
-            if key.lower() == field.lower():
+            aliases = FIELD_ALIASES.get(field, [field])
+            if any(key == _normalize_field_label(alias) for alias in aliases):
                 result[field] = value
     return result
 
