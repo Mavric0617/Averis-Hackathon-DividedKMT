@@ -1,3 +1,8 @@
+# Access our system via link below:
+
+https://averis-hackathon-divided-kmt.vercel.app/
+If you decided to review the codes and run it locally, follow the following steps ↓
+
 # DKMT — AI Summary in the chat box
 
 The AI Assistant chat box (bottom-right 🤖 button — now on all three pages:
