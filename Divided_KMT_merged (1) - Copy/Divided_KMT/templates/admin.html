@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DKMT | Admin</title>
+    <link rel="icon" type="image/x-icon" href="img/ett.ico">
+    <style>
+        body {
+            font-family: sans-serif;
+            background-image:url("img/1.webp");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size:cover;
+            background-attachment: fixed;
+            margin: 30px; }
+        .container { max-width: 800px; margin: 0 auto; background: rgba(0, 0, 0, 0.6); padding: 3.9vb; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);color:white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; font-size: 2vb; }
+        th { background-color: cyan; color:black }
+        .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 1.8vb; font-weight: bold; }
+        .status-online { background-color: #d4edda; color: #155724; }
+        .status-offline { background-color: #e2e3e5; color: #383d41; }
+        button { padding: 6px 12px; border: none; border-radius: 20px; cursor: pointer; font-size: 1.8vb; font-weight: bold; margin-right: 1vb; }
+        .btn-logout { background-color: #ffc107; color: black; }
+        .btn-logout:hover{background-color: black;color:#ffc107;}
+        .btn-delete { background-color: #dc3545; color: white; }
+        .btn-delete:hover{background-color: white;color:#dc3545;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>IT Department Administration</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Email</th>
+                <th>Merit</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="user-table-body"></tbody>
+    </table>
+    <br>
+    <a href="login.html" style="color: cyan; text-decoration: none;">← Back to Login Portal</a>
+</div>
+
+<script>
+    // Initialize the database with proper defaults if it doesn't exist
+    if (!localStorage.getItem('users')) {
+        localStorage.setItem('users', JSON.stringify([
+            { username: 'kmt', email: 'kmt@not.real', password: 'kmt^^^', etherite: 999 },
+            { username: 'user1', email: 'user1@not.real', password: 'user1^^^', etherite: 10 }
+        ]));
+    }
+
+    function renderTable() {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const activeUser = localStorage.getItem('currentSessionUser');
+        const tbody = document.getElementById('user-table-body');
+        tbody.innerHTML = '';
+
+        users.forEach(user => {
+            const isOnline = (activeUser && activeUser.toLowerCase() === user.username.toLowerCase());
+            
+            // Safety check: Read the real database value, fallback safely based on username if missing
+            let etheriteCount = user.etherite;
+            if (etheriteCount === undefined) {
+                etheriteCount = (user.username === 'kmt') ? 999 : 10;
+            }
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${user.username}</strong></td>
+                <td>${user.email}</td>
+                <td>${etheriteCount}</td>
+                <td><span class="status-badge ${isOnline ? 'status-online' : 'status-offline'}">${isOnline ? 'Signed In' : 'Offline'}</span></td>
+                <td>
+                    ${isOnline ? `<button class="btn-logout" onclick="forceLogout()">Log Out</button>` : ''}
+                    <button class="btn-delete" onclick="deleteUser('${user.username}')">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function forceLogout() {
+        if(confirm("Force disconnect this active user session?")) {
+            localStorage.removeItem('currentSessionUser');
+            renderTable();
+        }
+    }
+
+    function deleteUser(username) {
+        if (confirm(`Permanently delete account "${username}"?`)) {
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const activeUser = localStorage.getItem('currentSessionUser');
+
+            if (activeUser && activeUser.toLowerCase() === username.toLowerCase()) {
+                localStorage.removeItem('currentSessionUser');
+            }
+
+            users = users.filter(u => u.username.toLowerCase() !== username.toLowerCase());
+            localStorage.setItem('users', JSON.stringify(users));
+            renderTable();
+        }
+    }
+
+    renderTable();
+    setInterval(renderTable, 1500); 
+</script>
+
+</body>
+</html>

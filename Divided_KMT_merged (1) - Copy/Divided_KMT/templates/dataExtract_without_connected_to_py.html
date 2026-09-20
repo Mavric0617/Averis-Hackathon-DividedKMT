@@ -1,0 +1,651 @@
+<!-- Save as profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>DKMT | Data Extraction</title>
+    <link rel="icon" type="image/x-icon" href="img/ett.ico">
+
+    <meta charset="UTF-8">
+    <title>User Profile Dashboard</title>
+    <style>
+        body { font-family:Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-left: 0px;
+            box-sizing: border-box;
+            background-image:url("img/1.webp");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size:cover;
+            background-attachment: fixed;
+        }
+
+        .profile-card { background: rgba(2, 67, 77, 0.8);
+            position: sticky;
+            top:2%;
+            padding-left:2%;
+            padding-right:3%;
+            padding-top: 2%;
+            padding-bottom: 2%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 16%;
+            text-align: center;
+            height:85%;
+        }
+
+        .avatar { width: 10vb; height: 10vb; background-color: cyan; color: black; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4vb; font-weight: bold; margin: 0 auto auto; }
+
+        .meta-info { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; margin: 4vb 0; text-align: left; }
+        .meta-row { display: flex; justify-content: space-between; margin-bottom: 1vb; font-size: 2vb;color:white; }
+        .btn-edit { padding: 1.5vb; background-color: cyan; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb; }
+        .btn-edit:hover{background-color: black; color:cyan}
+        .btn-signout { padding: 10px; background-color: coral; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-signout:hover{background-color: black; color:coral}
+        .btn-dc { padding: 10px; background-color:rgb(196, 172, 219); color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb;}
+        .btn-dc:hover{background-color: black; color:rgb(196, 172, 219)}
+
+        /* Floating Round Button Style */
+        .ai-fab-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #00d2ff; /* Matches your left sidebar primary accent teal */
+        border: none;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, background-color 0.2s;
+        z-index: 1000;
+        }
+
+        .ai-fab-button:hover {
+        transform: scale(1.1);
+        background: #00bce4;
+        }
+
+        /* Chat Interface Window Layout */
+        .ai-chat-window {
+        position: fixed;
+        bottom: 105px;
+        right: 30px;
+        width: 380px;
+        height: 480px;
+        background: rgba(14, 38, 47, 0.95); /* Deep marine translucent background to match cards */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        }
+
+        /* Class to cleanly hide the element */
+        .hidden {
+        display: none !important;
+        opacity: 0;
+        transform: translateY(20px);
+        }
+
+        /* Header bar */
+        .ai-chat-header {
+        background: rgba(22, 60, 74, 0.9);
+        padding: 15px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-family: inherit;
+        }
+
+        .close-chat-btn {
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 22px;
+        cursor: pointer;
+        }
+
+        .close-chat-btn:hover {
+        color: white;
+        }
+
+        /* Messages body */
+        .ai-chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        }
+
+        .message {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        max-width: 85%;
+        line-height: 1.4;
+        color: white;
+        }
+
+        .system-msg {
+        background: rgba(255, 255, 255, 0.1);
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        }
+
+        .user-msg {
+        background: #00d2ff;
+        color: #111;
+        font-weight: 500;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+        }
+
+        /* Input area */
+        .ai-chat-footer {
+        padding: 12px;
+        background: rgba(10, 28, 35, 0.9);
+        display: flex;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-footer input {
+        flex: 1;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+        outline: none;
+        }
+
+        .ai-chat-footer input:focus {
+        border-color: #00d2ff;
+        }
+
+        .ai-chat-footer button {
+        padding: 0 16px;
+        background: #00d2ff;
+        border: none;
+        border-radius: 6px;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .ai-chat-footer button:hover {
+        background: #00bce4;
+        }
+
+        /* Core Structural Layout Container Workspace */
+        .extraction-workspace-container {
+            flex: 1;
+            padding: 25px 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+        }
+
+        .workspace-title {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Task Selector Filter Banner */
+        .task-selector-bar {
+            background: rgba(2, 67, 77, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 15px 25px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .task-selector-bar label {
+            font-weight: bold;
+            color: #00d2ff;
+        }
+
+        .task-selector-bar select {
+            background: #0e262f;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 15px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+            flex: 1;
+            font-size: 1rem;
+        }
+
+        .task-selector-bar select:focus {
+            border-color: #00d2ff;
+        }
+
+        /* Metadata Overview Header Strip */
+        .task-meta-summary {
+            background: rgba(10, 35, 43, 0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px 8px 0 0;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 0.95rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .task-meta-summary strong {
+            color: #00d2ff;
+        }
+
+        /* Comparative Document Table Grid */
+        .table-scroll-wrapper {
+            background: rgba(14, 38, 47, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0 0 8px 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        .comparison-matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 1rem;
+        }
+
+        .comparison-matrix-table th {
+            background: rgba(22, 60, 74, 0.95);
+            color: #00d2ff;
+            padding: 16px;
+            font-weight: bold;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .comparison-matrix-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            vertical-align: middle;
+        }
+
+        /* Alternating table row stripes */
+        .comparison-matrix-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .comparison-matrix-table tbody tr:hover {
+            background: rgba(2, 67, 77, 0.4);
+        }
+
+        /* Specific Highlight Status Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 4px;
+        }
+
+        /* Style variants for Mismatches vs Clean entries */
+        .row-mismatch {
+            background: rgba(255, 74, 74, 0.12) !important;
+        }
+
+        .row-mismatch td:first-child {
+            border-left: 4px solid #ff4a4a;
+        }
+
+        .text-mismatch-alert {
+            color: #ff4a4a;
+            font-weight: bold;
+        }
+
+        .badge-match {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid rgba(46, 204, 113, 0.4);
+        }
+
+        .badge-mismatch {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+        }
+
+        /* Blank view container configurations */
+        .workspace-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;
+            background: rgba(14, 38, 47, 0.6);
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #aaa;
+        }
+
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            opacity: 0.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="profile-card">
+    <div class="avatar" id="avatar">-</div>
+    <h2 id="greet" style="color:white;font-size: 3.5vb;">Welcome!</h2>
+    
+    <div class="meta-info">
+        <div class="meta-row"><span>Username:</span><span id="p-user" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Email Account:</span><span id="p-email" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Session Token:</span><span style="color: cyan; font-weight:bold;">● Exclusive Active</span></div>
+    </div>
+
+    <!-- Action Link Buttons Elements Container -->
+    <a target="_blank" href="profile.html"><button class="btn-edit">Back to Suite</button></a>
+    <button class="btn-signout" onclick="logout()">Log Out</button>
+    <br><br>
+    <a href="admin.html" target="_blank" style="font-size: 13px; color: cyan; text-decoration: none;">View Admin Panel</a>
+</div>
+
+<!--Main Part-->
+<div class="extraction-workspace-container">
+    <h1 class="workspace-title">Data Extraction & Verification Suite</h1>
+    
+    <!-- Top Bar: Task Selection Dropdown -->
+    <div class="task-selector-bar">
+        <label for="task-dropdown">Select Active Shipment Audit Task:</label>
+        <select id="task-dropdown" onchange="loadSelectedTaskData()">
+            <option value="" disabled selected>Loading active comparison pipelines...</option>
+        </select>
+    </div>
+
+    <!-- Main Workspace Block (Hidden until a task is chosen) -->
+    <div id="comparison-view-pane" class="comparison-view-pane hidden">
+        
+        <!-- Summary Header Meta-Information -->
+        <div class="task-meta-summary">
+            <div><strong>Sender Address:</strong> <span id="meta-sender">-</span></div>
+            <div><strong>Subject Line:</strong> <span id="meta-subject">-</span></div>
+            <div><strong>Audit Final Status:</strong> <span id="meta-status">-</span></div>
+        </div>
+
+        <!-- Comparative Grid Table Layout Matrix -->
+        <div class="table-scroll-wrapper">
+            <table class="comparison-matrix-table">
+                <thead>
+                    <tr>
+                        <th>Required Field Attribute</th>
+                        <th>📄 Shipping Instruction (SI)</th>
+                        <th>📝 Bill of Lading (BL)</th>
+                        <th>🚨 Validation Verification Status</th>
+                    </tr>
+                </thead>
+                <tbody id="comparison-table-rows">
+                    <!-- Dynamic validation row fields get appended here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Empty State Layout Canvas -->
+    <div id="workspace-placeholder" class="workspace-placeholder">
+        <div class="placeholder-icon">📊</div>
+        <p>Please select an active verification task from the dropdown selection bar above to run side-by-side extraction audits.</p>
+    </div>
+</div>
+
+<script>
+// Mock dataset matching the structured dictionary fields output from email_module2.py
+let comparisonTasksDataset = [
+    {
+        id: 1,
+        sender: "buyer1@company.com",
+        subject: "Check BL vs SI for Shipment #12345",
+        fields: {
+            SI: { "Shipper": "KMT Lines Ltd", "Consignee": "Alpha Imports", "Notify Party": "Logistics Broker LLC", "Port of Loading": "Busan", "Port of Discharge": "Rotterdam", "Container Count": "5", "Gross Weight (kg)": "24500" },
+            BL: { "Shipper": "KMT Lines Ltd", "Consignee": "Alpha Imports", "Notify Party": "Logistics Broker LLC", "Port of Loading": "Busan", "Port of Discharge": "Rotterdam", "Container Count": "5", "Gross Weight (kg)": "24500" }
+        }
+    },
+    {
+        id: 2,
+        sender: "buyer2@company.com",
+        subject: "Discrepancy check needed - Shipment #67890",
+        fields: {
+            SI: { "Shipper": "Hiew Freight Co", "Consignee": "Omega Logistics", "Notify Party": "Fast Customs Inc", "Port of Loading": "Penang", "Port of Discharge": "Los Angeles", "Container Count": "3", "Gross Weight (kg)": "22000" },
+            BL: { "Shipper": "Hiew Freight Co", "Consignee": "Omega Logistics", "Notify Party": "Fast Customs Inc", "Port of Loading": "Penang", "Port of Discharge": "Los Angeles", "Container Count": "4", "Gross Weight (kg)": "22000" } // Container Count Mismatch!
+        }
+    }
+];
+
+// Initialize the dropdown instantly on DOM render without needing the server running
+window.addEventListener('DOMContentLoaded', () => {
+    populateTaskDropdownSelector();
+});
+
+// Appends records into the dropdown options element picker menu
+function populateTaskDropdownSelector() {
+    const dropdown = document.getElementById('task-dropdown');
+    if (!dropdown) return;
+    dropdown.innerHTML = '<option value="" disabled selected>-- Choose an Email Task to Verify Fields --</option>';
+    
+    comparisonTasksDataset.forEach(task => {
+        const option = document.createElement('option');
+        option.value = task.id;
+        option.textContent = "Task #" + task.id + " | From: " + task.sender + " (" + task.subject.substring(0, 25) + "...)";
+        dropdown.appendChild(option);
+    });
+}
+
+// Intercepts option clicks, evaluates line items, and generates comparative table elements
+function loadSelectedTaskData() {
+    const selectedId = parseInt(document.getElementById('task-dropdown').value);
+    const task = comparisonTasksDataset.find(t => t.id === selectedId);
+    if (!task) return;
+
+    // Remove empty-state layout block and display grid metrics
+    const placeholder = document.getElementById('workspace-placeholder');
+    const viewPane = document.getElementById('comparison-view-pane');
+    if (placeholder) placeholder.classList.add('hidden');
+    if (viewPane) viewPane.classList.remove('hidden');
+
+    // Load dynamic element tracking meta headers text fields
+    document.getElementById('meta-sender').textContent = task.sender;
+    document.getElementById('meta-subject').textContent = task.subject;
+
+    const tableBody = document.getElementById('comparison-table-rows');
+    if (!tableBody) return;
+    tableBody.innerHTML = "";
+
+    const orderOfRequiredFields = [
+        "Shipper", "Consignee", "Notify Party", 
+        "Port of Loading", "Port of Discharge", 
+        "Container Count", "Gross Weight (kg)"
+    ];
+
+    let overallTaskHasMismatch = false;
+
+    orderOfRequiredFields.forEach(field => {
+        const siValue = task.fields.SI[field] || "Missing / Unextracted";
+        const blValue = task.fields.BL[field] || "Missing / Unextracted";
+        
+        const isMismatch = siValue !== blValue;
+        if (isMismatch) overallTaskHasMismatch = true;
+
+        const row = document.createElement('tr');
+        if (isMismatch) row.className = "row-mismatch";
+
+        row.innerHTML = `
+            <td><strong>` + field + `</strong></td>
+            <td class="` + (isMismatch ? 'text-mismatch-alert' : '') + `">` + siValue + `</td>
+            <td class="` + (isMismatch ? 'text-mismatch-alert' : '') + `">` + blValue + `</td>
+            <td>
+                ` + (isMismatch 
+                    ? `<span class="status-badge badge-mismatch">⚠️ Mismatch (SI: ` + siValue + ` / BL: ` + blValue + `)</span>` 
+                    : `<span class="status-badge badge-match">✅ Match</span>`
+                ) + `
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // Update global status badge look based on matching outcomes
+    const statusContainer = document.getElementById('meta-status');
+    if (statusContainer) {
+        if (overallTaskHasMismatch) {
+            statusContainer.innerHTML = '<span style="color: #ff4a4a; font-weight: bold;">⚠️ Attention Needed (Discrepancy Found)</span>';
+        } else {
+            statusContainer.innerHTML = '<span style="color: #2ecc71; font-weight: bold;">✅ No Mismatch Detected</span>';
+        }
+    }
+}
+
+</script>
+
+<!-- AI Floating Action Button -->
+<button id="ai-toggle-btn" class="ai-fab-button" onclick="toggleAIChat()">
+  🤖
+</button>
+
+<!-- AI Chat Interface Container -->
+<div id="ai-chat-container" class="ai-chat-window hidden">
+  <div class="ai-chat-header">
+    <h3>DKMT AI Assistant</h3>
+    <button class="close-chat-btn" onclick="toggleAIChat()">×</button>
+  </div>
+  
+  <!-- Chat Messages Display Area -->
+  <div id="ai-chat-messages" class="ai-chat-body">
+    <div class="message system-msg">
+      Hello employee! I can help you monitor mismatches, trace extraction failures, or review manual escalation logs. What do you need?
+    </div>
+  </div>
+  
+  <!-- Chat Input Action Area -->
+  <div class="ai-chat-footer">
+    <input type="text" id="ai-user-input" placeholder="Ask about shipment discrepancies..." onkeydown="if(event.key === 'Enter') sendAIMessage()">
+    <button onclick="sendAIMessage()">Send</button>
+  </div>
+</div>
+
+
+
+<!--script for AI helper-->
+<script>
+    // Toggles the visibility of the UI chat pop-up container
+function toggleAIChat() {
+  const chatContainer = document.getElementById('ai-chat-container');
+  chatContainer.classList.toggle('hidden');
+  
+  // Auto-scroll window to bottom when opened
+  if (!chatContainer.classList.contains('hidden')) {
+    const messageBody = document.getElementById('ai-chat-messages');
+    messageBody.scrollTop = messageBody.scrollHeight;
+  }
+}
+
+// Appends user text messages dynamically to the UI log
+function sendAIMessage() {
+  const inputEl = document.getElementById('ai-user-input');
+  const text = inputEl.value.trim();
+  
+  if (!text) return;
+  
+  const messageBody = document.getElementById('ai-chat-messages');
+  
+  // Create User Message Element
+  const userDiv = document.createElement('div');
+  userDiv.className = 'message user-msg';
+  userDiv.textContent = text;
+  messageBody.appendChild(userDiv);
+  
+  // Clear Input Box
+  inputEl.value = '';
+  
+  // Smooth scroll down to view new message
+  messageBody.scrollTop = messageBody.scrollHeight;
+  
+  // Simulating a quick automated response placeholder for the demo
+  setTimeout(() => {
+    const responseDiv = document.createElement('div');
+    responseDiv.className = 'message system-msg';
+    responseDiv.textContent = "Processing pipeline request... I can see that Shipment #67890 currently contains an unresolved container count mismatch.";
+    messageBody.appendChild(responseDiv);
+    messageBody.scrollTop = messageBody.scrollHeight;
+  }, 1000);
+}
+
+</script>
+
+<script>
+    function verifySession() {
+        const sessionUser = localStorage.getItem('currentSessionUser');
+        if (!sessionUser) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const match = users.find(u => u.username.toLowerCase() === sessionUser.toLowerCase());
+
+        if (!match) {
+            alert('Your active account session has been dissolved by the Admin.');
+            localStorage.removeItem('currentSessionUser');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        document.getElementById('p-user').textContent = match.username;
+        document.getElementById('p-email').textContent = match.email;
+        document.getElementById('greet').textContent = `Welcome, ${match.username}!`;
+        document.getElementById('avatar').textContent = match.username.charAt(0).toUpperCase();
+    }
+
+    function goToEditPage() {
+        window.location.href = 'edit.html';
+    }
+
+    function logout() {
+        localStorage.removeItem('currentSessionUser');
+        window.location.href = 'login.html';
+    }
+
+    verifySession();
+    setInterval(verifySession, 2000); 
+</script>
+</body>
+</html>

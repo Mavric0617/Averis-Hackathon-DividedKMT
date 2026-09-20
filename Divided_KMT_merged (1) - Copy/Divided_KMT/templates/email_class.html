@@ -1,0 +1,858 @@
+<!-- Save as profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>DKMT | E-mail Sort</title>
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon">
+
+    <link rel="icon" type="image/x-icon" href="img/ett.ico">
+
+    <meta charset="UTF-8">
+    <title>User Profile Dashboard</title>
+    <style>
+        body { font-family:Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-left: 0px;
+            box-sizing: border-box;
+            background-image:url("img/1.webp");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size:cover;
+            background-attachment: fixed;
+        }
+
+        .profile-card { background: rgba(2, 67, 77, 0.8);
+            position: sticky;
+            top:2%;
+            padding-left:2%;
+            padding-right:3%;
+            padding-top: 2%;
+            padding-bottom: 2%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 16%;
+            text-align: center;
+            height:85%;
+        }
+
+        .avatar { width: 10vb; height: 10vb; background-color: cyan; color: black; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4vb; font-weight: bold; margin: 0 auto auto; }
+
+        .meta-info { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; margin: 4vb 0; text-align: left; }
+        .meta-row { display: flex; justify-content: space-between; margin-bottom: 1vb; font-size: 2vb;color:white; }
+        .btn-edit { padding: 1.5vb; background-color: cyan; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb; }
+        .btn-edit:hover{background-color: black; color:cyan}
+        .btn-signout { padding: 10px; background-color: coral; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-signout:hover{background-color: black; color:coral}
+        .btn-dc { padding: 10px; background-color:rgb(196, 172, 219); color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb;}
+        .btn-dc:hover{background-color: black; color:rgb(196, 172, 219)}
+
+        /* Floating Round Button Style */
+        .ai-fab-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #00d2ff; /* Matches your left sidebar primary accent teal */
+        border: none;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, background-color 0.2s;
+        z-index: 1000;
+        }
+
+        .ai-fab-button:hover {
+        transform: scale(1.1);
+        background: #00bce4;
+        }
+
+        /* Chat Interface Window Layout */
+        .ai-chat-window {
+        position: fixed;
+        bottom: 105px;
+        right: 30px;
+        width: 380px;
+        height: 480px;
+        background: rgba(14, 38, 47, 0.95); /* Deep marine translucent background to match cards */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        }
+
+        /* Class to cleanly hide the element */
+        .hidden {
+        display: none !important;
+        opacity: 0;
+        transform: translateY(20px);
+        }
+
+        /* Header bar */
+        .ai-chat-header {
+        background: rgba(22, 60, 74, 0.9);
+        padding: 15px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-family: inherit;
+        }
+
+        .close-chat-btn {
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 22px;
+        cursor: pointer;
+        }
+
+        .close-chat-btn:hover {
+        color: white;
+        }
+
+        /* Messages body */
+        .ai-chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        }
+
+        .message {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        max-width: 85%;
+        line-height: 1.4;
+        color: white;
+        }
+
+        .system-msg {
+        background: rgba(255, 255, 255, 0.1);
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        }
+
+        .user-msg {
+        background: #00d2ff;
+        color: #111;
+        font-weight: 500;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+        }
+
+        /* Input area */
+        .ai-chat-footer {
+        padding: 12px;
+        background: rgba(10, 28, 35, 0.9);
+        display: flex;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-footer input {
+        flex: 1;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+        outline: none;
+        }
+
+        .ai-chat-footer input:focus {
+        border-color: #00d2ff;
+        }
+
+        .ai-chat-footer button {
+        padding: 0 16px;
+        background: #00d2ff;
+        border: none;
+        border-radius: 6px;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .ai-chat-footer button:hover {
+        background: #00bce4;
+        }
+
+                /* Core Layout Wrapper */
+        .email-dashboard-container {
+            flex: 1;
+            padding: 20px 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Category Tab Bar */
+        .inbox-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(2, 67, 77, 0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #ccc;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            background: rgba(2, 67, 77, 0.8);
+            color: white;
+        }
+
+        .tab-btn.active {
+            background: #00d2ff;
+            color: #111;
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        /* Split-Pane Design Workspace */
+        .inbox-workspace {
+            display: flex;
+            gap: 25px;
+            height: calc(100vh - 200px);
+        }
+
+        /* Email Tiles List Stack */
+        .tiles-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Individual Email Tile Block */
+        .email-tile {
+            background: rgba(2, 67, 77, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.15s ease, background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .email-tile:hover {
+            background: rgba(2, 67, 77, 0.95);
+            transform: translateY(-2px);
+            border-color: rgba(0, 210, 255, 0.4);
+        }
+
+        .email-tile.selected {
+            border-left: 5px solid #00d2ff;
+            background: rgba(4, 88, 101, 0.95);
+        }
+
+        .tile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #00d2ff; /* Bright readable teal for the sender */
+            gap: 3px;
+            min-width: 0;
+        }
+
+        .tile-header span:first-child {
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .tile-header span:last-child {
+            color: #aaa;
+            max-width: 100%;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+
+        .tile-subject {
+            font-weight: bold;
+            font-size: 1.05rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tile-snippet {
+            font-size: 0.9rem;
+            color: #bbb;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Email Detail Pane View */
+        .detail-column {
+            flex: 1.5;
+            background: rgba(10, 35, 43, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 25px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .empty-state {
+            justify-content: center;
+            align-items: center;
+            color: #888;
+        }
+
+        .placeholder-text {
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* Detail Elements inside Open Pane */
+        .email-view-header {
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .email-view-subject {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .email-view-meta {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .email-view-meta strong {
+            color: #00d2ff;
+        }
+
+        .email-view-body {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            white-space: pre-wrap; /* Keeps normal text spacing and line breaks */
+            flex: 1;
+        }
+
+        /* Extracted Attachment Badge Styles */
+        .attachments-section {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .attachment-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+    </style>
+</head>
+<body>
+
+<!--inbox-->
+<div class="profile-card">
+    <div class="avatar" id="avatar">-</div>
+    <h2 id="greet" style="color:white;font-size: 3.5vb;">Welcome!</h2>
+    
+    <div class="meta-info">
+        <div class="meta-row"><span>Username:</span><span id="p-user" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Email Account:</span><span id="p-email" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Session Token:</span><span style="color: cyan; font-weight:bold;">● Exclusive Active</span></div>
+    </div>
+
+    <!-- Action Link Buttons Elements Container -->
+    <a target="_blank" href="profile.html"><button class="btn-edit">Back to Suite</button></a>
+    <button class="btn-signout" onclick="logout()">Log Out</button>
+    <br><br>
+    <a href="admin.html" target="_blank" style="font-size: 13px; color: cyan; text-decoration: none;">View Admin Panel</a>
+</div>
+
+
+<div class="email-dashboard-container">
+  <h1 class="page-title">Email Classification Hub</h1>
+  
+  <!-- Category Navigation Tabs -->
+  <div class="inbox-tabs">
+    <button class="tab-btn active" onclick="switchTab('comparison')">📥 Comparison Requests (<span id="count-comp">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('new-si')">📄 New SI Requests (<span id="count-si">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('invoice')">💰 Invoice Queries (<span id="count-inv">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('general')">✉️ General Mail (<span id="count-gen">0</span>)</button>
+    <button class="tab-btn" onclick="switchTab('spam')">🚫 Spam (<span id="count-spam">0</span>)</button>
+  </div>
+
+  <!-- Workspace: Split view for Tiles and Email Reader -->
+  <div class="inbox-workspace">
+    <!-- Left Column: Dynamic Email Tiles List -->
+    <div id="email-tiles-list" class="tiles-column">
+      <!-- Generated dynamic tiles go here -->
+    </div>
+
+    <!-- Right Column: Full Email Reading Pane -->
+    <div id="email-detail-pane" class="detail-column empty-state">
+      <div class="placeholder-text">Select an email from the list to view its contents</div>
+    </div>
+  </div>
+</div>
+
+<!--script for inbox-->
+<script>
+// Master array to hold parsed email variables from email_module2.py
+let emailDataset = [];
+let activeTab = "comparison";
+
+// Kick off backend fetch routine as soon as template renders
+window.onload = function() {
+    fetchLiveClassifiedEmails();
+};
+
+// Requests parsed dataset from python web app pipeline
+function fetchLiveClassifiedEmails() {
+    const listContainer = document.getElementById('email-tiles-list');
+    if (listContainer) {
+        listContainer.innerHTML = `<div style="color:#00d2ff; text-align:center; padding-top:20px;">Running email_module2.py pipeline...</div>`;
+    }
+    
+    fetch('/api/classified-emails')
+        .then(response => {
+            if (!response.ok) throw new Error("Backend processing failed");
+            return response.json();
+        })
+        .then(data => {
+            emailDataset = data; 
+            updateBadgeCounts(); 
+            switchTab(activeTab); 
+        })
+        .catch(error => {
+            console.error("Error linking with email_module2.py:", error);
+            if (listContainer) {
+                listContainer.innerHTML = `<div style="color:#ff4a4a; text-align:center; padding-top:20px;">
+                    <strong>Frontend Fetch Catch:</strong><br>${error.message}
+                </div>`;
+            }
+        });
+}
+
+// Recalculates dashboard total badges across categorized streams
+function updateBadgeCounts() {
+    document.getElementById('count-comp').textContent = emailDataset.filter(e => e.category === 'comparison').length;
+    document.getElementById('count-si').textContent = emailDataset.filter(e => e.category === 'new-si').length;
+    document.getElementById('count-inv').textContent = emailDataset.filter(e => e.category === 'invoice').length;
+    document.getElementById('count-gen').textContent = emailDataset.filter(e => e.category === 'general').length;
+    document.getElementById('count-spam').textContent = emailDataset.filter(e => e.category === 'spam').length;
+}
+
+// Toggles active selection layout tabs and resets view states
+function switchTab(category) {
+    activeTab = category;
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(category)) {
+            btn.classList.add('active');
+        }
+    });
+
+    renderTiles();
+    
+    const detailPane = document.getElementById('email-detail-pane');
+    if (detailPane) {
+        detailPane.className = "detail-column empty-state";
+        detailPane.innerHTML = `<div class="placeholder-text">Select an email from the list to view its contents</div>`;
+    }
+}
+
+// Renders the email summary tiles in the workspace stack
+function renderTiles() {
+    const listContainer = document.getElementById('email-tiles-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+    
+    const filteredEmails = emailDataset.filter(e => e.category === activeTab);
+    
+    if(filteredEmails.length === 0) {
+        listContainer.innerHTML = `<div style="color:#888; text-align:center; padding-top:20px;">No emails in this category.</div>`;
+        return;
+    }
+
+    filteredEmails.forEach(email => {
+        const tile = document.createElement('div');
+        tile.className = 'email-tile';
+        tile.id = 'tile-' + email.id;
+        tile.onclick = function() { selectEmail(email.id); };
+        
+        tile.innerHTML = `
+            <div class="tile-header">
+                <span>` + email.sender + `</span>
+                <span>` + email.date + `</span>
+            </div>
+            <div class="tile-subject">` + email.subject + `</div>
+            <div class="tile-snippet">` + email.body + `</div>
+        `;
+        listContainer.appendChild(tile);
+    });
+}
+
+// Opens the reading pane to display full text contents and badges
+function selectEmail(id) {
+    document.querySelectorAll('.email-tile').forEach(t => t.classList.remove('selected'));
+    
+    const selectedTile = document.getElementById('tile-' + id);
+    if(selectedTile) selectedTile.classList.add('selected');
+
+    const email = emailDataset.find(e => e.id === id);
+    const detailPane = document.getElementById('email-detail-pane');
+    if (!detailPane || !email) return;
+    
+    detailPane.className = "detail-column";
+    
+    let attachmentsHTML = "";
+    if(email.attachments && email.attachments.length > 0) {
+        attachmentsHTML = `<div class="attachments-section">
+            <div style="font-size:0.9rem; color:#aaa; margin-bottom:8px;">📎 Attachments:</div>`;
+        
+        email.attachments.forEach(name => {
+            attachmentsHTML += `<span class="attachment-badge">📄 ` + name + `</span>`;
+        });
+        
+        attachmentsHTML += `</div>`;
+    }
+
+    detailPane.innerHTML = `
+        <div class="email-view-header">
+            <h2 class="email-view-subject">` + email.subject + `</h2>
+            <div class="email-view-meta">
+                <div><strong>From:</strong> ` + email.sender + `</div>
+                <div><strong>Date:</strong> ` + email.date + `</div>
+            </div>
+        </div>
+        <div class="email-view-body">` + email.body + `</div>
+        ` + attachmentsHTML + `
+    `;
+}
+
+</script>
+
+<!-- AI Floating Action Button -->
+<button id="ai-toggle-btn" class="ai-fab-button" onclick="toggleAIChat()">
+  🤖
+</button>
+
+<!-- AI Chat Interface Container -->
+<div id="ai-chat-container" class="ai-chat-window hidden">
+  <div class="ai-chat-header">
+    <h3>DKMT AI Assistant</h3>
+    <button class="close-chat-btn" onclick="toggleAIChat()">×</button>
+  </div>
+  
+  <!-- Chat Messages Display Area -->
+  <div id="ai-chat-messages" class="ai-chat-body">
+    <div class="message system-msg">
+    Hi! I can chat with you about the inbox, or generate a full summary when you ask.
+    </div>
+  </div>
+  
+  <!-- Chat Input Action Area -->
+<div class="ai-chat-footer">
+    <input type="text" id="ai-user-input" placeholder="Ask about shipment discrepancies..." onkeydown="if(event.key === 'Enter') sendAIMessage()">
+    <button onclick="sendAIMessage()">Send</button>
+  </div>
+</div>
+
+<!--script for AI helper-->
+<script>
+    // Toggles the visibility of the UI chat pop-up container
+function toggleAIChat() {
+  const chatContainer = document.getElementById('ai-chat-container');
+  chatContainer.classList.toggle('hidden');
+  
+  // Auto-scroll window to bottom when opened
+  if (!chatContainer.classList.contains('hidden')) {
+    const messageBody = document.getElementById('ai-chat-messages');
+    messageBody.scrollTop = messageBody.scrollHeight;
+  }
+}
+
+// Appends user text messages dynamically to the UI log
+function sendAIMessage() {
+  const inputEl = document.getElementById('ai-user-input');
+  const text = inputEl.value.trim();
+
+  if (!text) return;
+
+  const messageBody = document.getElementById('ai-chat-messages');
+
+  // Create User Message Element
+  const userDiv = document.createElement('div');
+  userDiv.className = 'message user-msg';
+  userDiv.textContent = text;
+  messageBody.appendChild(userDiv);
+
+  // Clear Input Box
+  inputEl.value = '';
+
+  // Smooth scroll down to view new message
+  messageBody.scrollTop = messageBody.scrollHeight;
+
+    // Word-boundary so it doesn't fire on words like "consume" or "assumption".
+  const triggerRegex = /\b(summary|summarize|sum|review)\b/i;
+    const fieldQueryRegex = /\b(port\s+of\s+loading|loading\s+port|pol|pl|port\s+of\s+discharge|discharge\s+port|pod|gross\s+weight|gross\s+wt|weight|kg|gw|container\s+count|containers|cc|shipper|consignee|notify\s+party|notify)\b/i;
+    if (!triggerRegex.test(text) || fieldQueryRegex.test(text)) {
+        appendSystemMessage(getDataReply(text));
+    return;
+  }
+
+  const loadingEl = appendSystemMessage('Generating your inbox summary…');
+
+  fetch('/api/summary')
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      loadingEl.remove();
+      if (!ok) {
+        appendSystemMessage('⚠️ ' + (data.error || "Couldn't generate a summary."));
+        return;
+      }
+      appendSummaryMessage(data.summary);
+    })
+    .catch(err => {
+      loadingEl.remove();
+      appendSystemMessage('⚠️ Network error: ' + err.message);
+    });
+}
+
+function getDataReply(text) {
+    const query = text.toLowerCase();
+    const fieldAliases = [
+        { name: 'Port of Loading', aliases: ['port of loading', 'loading port', 'pol', 'pl'] },
+        { name: 'Port of Discharge', aliases: ['port of discharge', 'discharge port', 'pod'] },
+        { name: 'Gross Weight (kg)', aliases: ['gross weight', 'gross wt', 'weight', 'kg', 'gw'] },
+        { name: 'Container Count', aliases: ['container count', 'containers', 'container number', 'cc'] },
+        { name: 'Shipper', aliases: ['shipper'] },
+        { name: 'Consignee', aliases: ['consignee'] },
+        { name: 'Notify Party', aliases: ['notify party', 'notify'] }
+    ];
+    const requestedField = fieldAliases.find(field =>
+        field.aliases.some(alias => new RegExp(`\\b${alias.replace(/ /g, '\\s+')}\\b`, 'i').test(query))
+    );
+
+    if (!requestedField) return getConversationalReply(text);
+
+    const answers = [];
+    emailDataset.forEach(email => {
+        const fields = email.fields || {};
+        const siValue = fields.SI && fields.SI[requestedField.name];
+        const blValue = fields.BL && fields.BL[requestedField.name];
+        if (siValue || blValue) {
+            answers.push(`${email.subject}: SI ${siValue || 'not available'}; BL ${blValue || 'not available'}`);
+        }
+    });
+
+    if (!answers.length) {
+        return `I couldn't find a recorded ${requestedField.name.toLowerCase()} in the loaded shipment documents.`;
+    }
+    return `Here is the ${requestedField.name} I found:\n\n${answers.join('\n')}`;
+}
+
+function getConversationalReply(text) {
+    const message = text.toLowerCase();
+
+    if (/\b(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(message)) {
+        return 'Hi! What would you like to check in the inbox today?';
+    }
+    if (/\b(thanks|thank you|thx)\b/.test(message)) {
+        return 'You’re welcome. I’m here whenever you need another look at the inbox.';
+    }
+    if (/\b(how are you|how is it going)\b/.test(message)) {
+        return 'I’m doing well and ready to help you review the inbox.';
+    }
+    if (/\b(help|what can you do|what do you do)\b/.test(message)) {
+        return 'I can generate an inbox summary, help you review shipment messages, and point you toward the manual review workflow. Try “summary” when you want the full report.';
+    }
+    if (/\b(bye|goodbye|see you)\b/.test(message)) {
+        return 'See you later. I’ll be here when you need to check the inbox again.';
+    }
+    return 'I’m listening. You can ask for a summary, or tell me what you’re trying to find in the inbox.';
+}
+
+// Adds a plain system text bubble, returns the element so callers can
+// remove it later (used for the "Generating…" loading message).
+function appendSystemMessage(text) {
+  const messageBody = document.getElementById('ai-chat-messages');
+  const div = document.createElement('div');
+  div.className = 'message system-msg';
+  div.textContent = text;
+  messageBody.appendChild(div);
+  messageBody.scrollTop = messageBody.scrollHeight;
+  return div;
+}
+
+// Adds the AI-generated summary as a bubble, with Print + Download PDF
+// buttons underneath it.
+function appendSummaryMessage(summaryText) {
+  const messageBody = document.getElementById('ai-chat-messages');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'message system-msg';
+
+  const textDiv = document.createElement('div');
+  textDiv.style.whiteSpace = 'pre-wrap';
+  textDiv.textContent = summaryText;
+  wrapper.appendChild(textDiv);
+
+  const btnRow = document.createElement('div');
+  btnRow.style.cssText = 'margin-top:10px; display:flex; gap:8px;';
+
+  const printBtn = document.createElement('button');
+  printBtn.textContent = '🖨 Print';
+  printBtn.style.cssText = 'padding:6px 12px; border-radius:6px; border:1px solid rgba(255,255,255,0.3); background:transparent; color:white; cursor:pointer; font-size:12px;';
+  printBtn.onclick = () => printSummary(summaryText);
+  btnRow.appendChild(printBtn);
+
+  const pdfBtn = document.createElement('button');
+  pdfBtn.textContent = '⬇ Download PDF';
+  pdfBtn.style.cssText = 'padding:6px 12px; border-radius:6px; border:none; background:#00d2ff; color:black; font-weight:bold; cursor:pointer; font-size:12px;';
+  pdfBtn.onclick = () => downloadSummaryPDF(pdfBtn);
+  btnRow.appendChild(pdfBtn);
+
+  wrapper.appendChild(btnRow);
+  messageBody.appendChild(wrapper);
+  messageBody.scrollTop = messageBody.scrollHeight;
+}
+
+// Opens the browser's native print dialog (which can "Save as PDF") with
+// just the summary text, formatted for print.
+function printSummary(summaryText) {
+  const win = window.open('', '_blank');
+  const safeText = summaryText.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  win.document.write(
+    '<html><head><title>Email Summary Report</title>' +
+    '<style>body{font-family:Arial,sans-serif;padding:40px;white-space:pre-wrap;line-height:1.6;}' +
+    'h1{font-size:20px;}</style></head><body>' +
+    '<h1>Email Summary Report</h1><div>' + safeText + '</div></body></html>'
+  );
+  win.document.close();
+  win.focus();
+  win.print();
+}
+
+// Downloads a server-generated PDF report (summary + full source email list).
+function downloadSummaryPDF(btn) {
+  const originalText = btn.textContent;
+  btn.textContent = 'Generating…';
+  btn.disabled = true;
+
+  fetch('/api/summary/pdf')
+    .then(res => {
+      if (!res.ok) return res.json().then(data => { throw new Error(data.error || 'Failed to generate PDF'); });
+      return res.blob();
+    })
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'email-summary-report.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    })
+    .catch(err => alert('PDF generation failed: ' + err.message))
+    .finally(() => {
+      btn.textContent = originalText;
+      btn.disabled = false;
+    });
+}
+
+</script>
+
+<script>
+    function verifySession() {
+        const sessionUser = localStorage.getItem('currentSessionUser');
+        if (!sessionUser) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const match = users.find(u => u.username.toLowerCase() === sessionUser.toLowerCase());
+
+        if (!match) {
+            alert('Your active account session has been dissolved by the Admin.');
+            localStorage.removeItem('currentSessionUser');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        document.getElementById('p-user').textContent = match.username;
+        document.getElementById('p-email').textContent = match.email;
+        document.getElementById('greet').textContent = `Welcome, ${match.username}!`;
+        document.getElementById('avatar').textContent = match.username.charAt(0).toUpperCase();
+    }
+
+    function goToEditPage() {
+        window.location.href = 'edit.html';
+    }
+
+    function logout() {
+        localStorage.removeItem('currentSessionUser');
+        window.location.href = 'login.html';
+    }
+
+    verifySession();
+    setInterval(verifySession, 2000); 
+</script>
+</body>
+</html>

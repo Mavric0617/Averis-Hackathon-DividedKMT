@@ -1,0 +1,662 @@
+<!-- Save as profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>DKMT | Manual Review</title>
+    <link rel="icon" type="image/x-icon" href="img/ett.ico">
+
+    <meta charset="UTF-8">
+    <title>User Profile Dashboard</title>
+    <style>
+        body { font-family:Arial, Helvetica, sans-serif;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding-left: 0px;
+            box-sizing: border-box;
+            background-image:url("img/1.webp");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size:cover;
+            background-attachment: fixed;
+        }
+
+        .profile-card { background: rgba(2, 67, 77, 0.8);
+            position: sticky;
+            top:2%;
+            padding-left:2%;
+            padding-right:3%;
+            padding-top: 2%;
+            padding-bottom: 2%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 16%;
+            text-align: center;
+            height:85%;
+        }
+
+        .avatar { width: 10vb; height: 10vb; background-color: cyan; color: black; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 4vb; font-weight: bold; margin: 0 auto auto; }
+
+        .meta-info { border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 15px 0; margin: 4vb 0; text-align: left; }
+        .meta-row { display: flex; justify-content: space-between; margin-bottom: 1vb; font-size: 2vb;color:white; }
+        .btn-edit { padding: 1.5vb; background-color: cyan; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb; }
+        .btn-edit:hover{background-color: black; color:cyan}
+        .btn-signout { padding: 10px; background-color: coral; color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; }
+        .btn-signout:hover{background-color: black; color:coral}
+        .btn-dc { padding: 10px; background-color:rgb(196, 172, 219); color: black; border: none; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 2vb;}
+        .btn-dc:hover{background-color: black; color:rgb(196, 172, 219)}
+
+        /* Floating Round Button Style */
+        .ai-fab-button {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #00d2ff; /* Matches your left sidebar primary accent teal */
+        border: none;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: transform 0.2s ease, background-color 0.2s;
+        z-index: 1000;
+        }
+
+        .ai-fab-button:hover {
+        transform: scale(1.1);
+        background: #00bce4;
+        }
+
+        /* Chat Interface Window Layout */
+        .ai-chat-window {
+        position: fixed;
+        bottom: 105px;
+        right: 30px;
+        width: 380px;
+        height: 480px;
+        background: rgba(14, 38, 47, 0.95); /* Deep marine translucent background to match cards */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        z-index: 1000;
+        }
+
+        /* Class to cleanly hide the element */
+        .hidden {
+        display: none !important;
+        opacity: 0;
+        transform: translateY(20px);
+        }
+
+        /* Header bar */
+        .ai-chat-header {
+        background: rgba(22, 60, 74, 0.9);
+        padding: 15px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-header h3 {
+        margin: 0;
+        font-size: 16px;
+        font-family: inherit;
+        }
+
+        .close-chat-btn {
+        background: none;
+        border: none;
+        color: #aaa;
+        font-size: 22px;
+        cursor: pointer;
+        }
+
+        .close-chat-btn:hover {
+        color: white;
+        }
+
+        /* Messages body */
+        .ai-chat-body {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        }
+
+        .message {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        max-width: 85%;
+        line-height: 1.4;
+        color: white;
+        }
+
+        .system-msg {
+        background: rgba(255, 255, 255, 0.1);
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        }
+
+        .user-msg {
+        background: #00d2ff;
+        color: #111;
+        font-weight: 500;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+        }
+
+        /* Input area */
+        .ai-chat-footer {
+        padding: 12px;
+        background: rgba(10, 28, 35, 0.9);
+        display: flex;
+        gap: 8px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chat-footer input {
+        flex: 1;
+        padding: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        color: white;
+        outline: none;
+        }
+
+        .ai-chat-footer input:focus {
+        border-color: #00d2ff;
+        }
+
+        .ai-chat-footer button {
+        padding: 0 16px;
+        background: #00d2ff;
+        border: none;
+        border-radius: 6px;
+        color: #111;
+        font-weight: bold;
+        cursor: pointer;
+        }
+
+        .ai-chat-footer button:hover {
+        background: #00bce4;
+        }
+
+        /* Core Structural Layout Workspace Wrapper */
+        .escalation-workspace-container {
+            flex: 1;
+            padding: 25px 40px;
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+        }
+
+        .workspace-title {
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        /* Split Pane Flex Layout */
+        .escalation-split-view {
+            display: flex;
+            gap: 25px;
+            height: calc(100vh - 180px);
+        }
+
+        /* Left Side: Failure Tickets List */
+        .tickets-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Individual Escalation Ticket Card Style */
+        .ticket-tile {
+            background: rgba(45, 38, 16, 0.6); /* Amber-tinted background signifying warnings */
+            border: 1px solid rgba(241, 196, 15, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+        }
+
+        .ticket-tile:hover {
+            background: rgba(65, 54, 20, 0.85);
+            transform: translateY(-2px);
+            border-color: #f1c40f;
+        }
+
+        .ticket-tile.selected {
+            border-left: 5px solid #f1c40f;
+            background: rgba(75, 62, 21, 0.95);
+        }
+
+        .ticket-meta-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #f1c40f;
+            margin-bottom: 5px;
+        }
+
+        .ticket-reason-badge {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff4a4a;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .ticket-subject {
+            font-weight: bold;
+            font-size: 1.05rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Right Side: Intervention View Panel */
+        .detail-column {
+            flex: 1.6;
+            background: rgba(10, 35, 43, 0.88);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 25px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .empty-state {
+            justify-content: center;
+            align-items: center;
+            color: #888;
+        }
+
+        .placeholder-text {
+            font-style: italic;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        /* Auto-generated Email Code Output Pane */
+        .generated-email-header {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .generated-email-box {
+            background: #06151a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            color: #2ecc71; /* High contrast matrix-green console output look */
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        /* Human Intervention Form Elements */
+        .staff-intervention-section {
+            border-top: 1px solid rgba(255,255,255,0.15);
+            padding-top: 20px;
+            margin-top: auto;
+        }
+
+        .staff-intervention-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #f1c40f;
+        }
+
+        .intervention-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        .form-group input {
+            background: #0e262f;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 5px;
+            padding: 8px 12px;
+            color: white;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #f1c40f;
+        }
+
+        /* Resolve Form Button */
+        .resolve-submit-btn {
+            background: #f1c40f;
+            color: #111;
+            border: none;
+            padding: 12px 20px;
+            font-weight: bold;
+            font-size: 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .resolve-submit-btn:hover {
+            background: #d4ac0d;
+        }
+
+
+    </style>
+</head>
+<body>
+
+<div class="profile-card">
+    <div class="avatar" id="avatar">-</div>
+    <h2 id="greet" style="color:white;font-size: 3.5vb;">Welcome!</h2>
+    
+    <div class="meta-info">
+        <div class="meta-row"><span>Username:</span><span id="p-user" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Email Account:</span><span id="p-email" style="font-weight:bold;">-</span></div>
+        <div class="meta-row"><span>Session Token:</span><span style="color: cyan; font-weight:bold;">● Exclusive Active</span></div>
+    </div>
+
+    <!-- Action Link Buttons Elements Container -->
+    <a target="_blank" href="profile.html"><button class="btn-edit">Back to Suite</button></a>
+    <button class="btn-signout" onclick="logout()">Log Out</button>
+    <br><br>
+    <a href="admin.html" target="_blank" style="font-size: 13px; color: cyan; text-decoration: none;">View Admin Panel</a>
+</div>
+
+<div class="escalation-workspace-container">
+    <h1 class="workspace-title">Manual Review & Escalation Dispatch Queue</h1>
+    
+    <div class="escalation-split-view">
+        <!-- Left Column: Pending Failure Tickets List -->
+        <div id="escalation-tickets-list" class="tickets-column">
+            <!-- Dynamic failure tiles go here -->
+        </div>
+
+        <!-- Right Column: Escalation Details & Human Intervention Workspace -->
+        <div id="escalation-detail-pane" class="detail-column empty-state">
+            <div class="placeholder-text">Select a pending escalation ticket to open the staff intervention deck</div>
+        </div>
+    </div>
+</div>
+
+<!--script for main function-->
+<script>
+// Standalone mock array mimicking pipeline escalation structures from email_module2.py
+let escalationDataset = [
+    {
+        id: 4,
+        sender: "unmapped_partner@logistics.net",
+        subject: "General Space Availability Check Inquiry",
+        date: "Today, 10:45 AM",
+        reason: "Unmatched Category",
+        body: "Hello, do you have any free vessel slots available for shipping lanes heading to Singapore next Thursday? Let me know pricing metrics.",
+        generated_email: "To: staff@company.com\nSubject: [Needs manual review] Email from unmapped_partner@logistics.net (ID: 4)\n\nThe system could not process this email automatically. Reason: The system can't categorize this email into any known category.\n\n------ Email information ------\nSender      : unmapped_partner@logistics.net\nSubject     : General Space Availability Check Inquiry\n-------------------------------"
+    },
+    {
+        id: 7,
+        sender: "forwarder_ops@globalcargo.com",
+        subject: "Urgent Document Review - Shipment #99231",
+        date: "Yesterday",
+        reason: "Extraction Failed",
+        body: "Attached is the manifest report file. Please verify it ASAP.",
+        generated_email: "To: staff@company.com\nSubject: [Needs manual review] Email from forwarder_ops@globalcargo.com (ID: 7)\n\nThe system could not process this email automatically. Reason: The email was classified as a comparison request, but the valid SI/BL fields couldn't be extracted from the attachment (either the attachment is missing or the format can't be recognized)\n\n------ Email information ------\nSender      : forwarder_ops@globalcargo.com\nSubject     : Urgent Document Review - Shipment #99231\n-------------------------------"
+    }
+];
+
+window.addEventListener('DOMContentLoaded', () => {
+    renderTicketTiles();
+});
+
+// Draws the left column warning ticket cards
+function renderTicketTiles() {
+    const listContainer = document.getElementById('escalation-tickets-list');
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+
+    if (escalationDataset.length === 0) {
+        listContainer.innerHTML = `<div style="color:#aaa; text-align:center; padding-top:20px;">🎉 Zero pending escalations. All clear!</div>`;
+        return;
+    }
+
+    escalationDataset.forEach(ticket => {
+        const tile = document.createElement('div');
+        tile.className = 'ticket-tile';
+        tile.id = 'ticket-' + ticket.id;
+        tile.onclick = function() { selectEscalationTicket(ticket.id); };
+
+        tile.innerHTML = `
+            <div class="ticket-meta-header">
+                <span>Task #${ticket.id}</span>
+                <span class="ticket-reason-badge">${ticket.reason}</span>
+            </div>
+            <div class="ticket-subject">${ticket.subject}</div>
+            <div style="font-size: 0.85rem; color: #bbb;">From: ${ticket.sender}</div>
+        `;
+        listContainer.appendChild(tile);
+    });
+}
+
+// Opens the right-hand panel view containing code and fix inputs
+function selectEscalationTicket(id) {
+    document.querySelectorAll('.ticket-tile').forEach(t => t.classList.remove('selected'));
+    
+    const selectedTile = document.getElementById('ticket-' + id);
+    if (selectedTile) selectedTile.classList.add('selected');
+
+    const ticket = escalationDataset.find(t => t.id === id);
+    const detailPane = document.getElementById('escalation-detail-pane');
+    if (!detailPane || !ticket) return;
+
+    detailPane.className = "detail-column";
+
+    // Standard human fix template input fields configuration
+    let trackingFormHTML = `
+        <div class="staff-intervention-section">
+            <h3>🛠️ Human Operator Overrides Desk</h3>
+            <div class="intervention-form-grid">
+                <div class="form-group">
+                    <label>Assigned Container Count:</label>
+                    <input type="text" id="override-container" placeholder="e.g. 5">
+                </div>
+                <div class="form-group">
+                    <label>Assigned Gross Weight (kg):</label>
+                    <input type="text" id="override-weight" placeholder="e.g. 24500">
+                </div>
+            </div>
+            <button class="resolve-submit-btn" onclick="submitStaffResolution(${ticket.id})">Force System Resolution & Dispatch</button>
+        </div>
+    `;
+
+    detailPane.innerHTML = `
+        <div style="border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom:15px; margin-bottom:15px;">
+            <h2 style="margin:0 0 10px 0; font-size:1.5rem; color:#f1c40f;">${ticket.subject}</h2>
+            <div style="font-size:0.9rem; color:#aaa; line-height:1.4;">
+                <div><strong>Sender:</strong> ${ticket.sender}</div>
+                <div><strong>Received:</strong> ${ticket.date}</div>
+                <div><strong>Failure Route Triggered:</strong> <span style="color:#ff4a4a; font-weight:bold;">${ticket.reason}</span></div>
+            </div>
+        </div>
+
+        <div class="generated-email-header">💻 Auto-Generated System Escalation Log Body Output:</div>
+        <div class="generated-email-box">${ticket.generated_email}</div>
+
+        <div style="margin-bottom:20px;">
+            <div style="font-size:0.9rem; color:#aaa; margin-bottom:5px; font-weight:bold;">✉️ Raw Unhandled Email Message Context:</div>
+            <div style="font-size:0.95rem; color:#e0e0e0; line-height:1.5; background:rgba(255,255,255,0.03); padding:12px; border-radius:6px;">${ticket.body}</div>
+        </div>
+
+        ${trackingFormHTML}
+    `;
+}
+
+// Simulates processing action and pops item out from structural list
+function submitStaffResolution(id) {
+    alert("Resolution submitted successfully! Document mapping override updated on the system core.");
+    
+    // Pop the resolved ticket out of the queue list array
+    escalationDataset = escalationDataset.filter(t => t.id !== id);
+    renderTicketTiles();
+
+    // Reset right workspace pane details viewport
+    const detailPane = document.getElementById('escalation-detail-pane');
+    detailPane.className = "detail-column empty-state";
+    detailPane.innerHTML = `<div class="placeholder-text">Select a pending escalation ticket to open the staff intervention deck</div>`;
+}
+
+</script>
+
+<!-- AI Floating Action Button -->
+<button id="ai-toggle-btn" class="ai-fab-button" onclick="toggleAIChat()">
+  🤖
+</button>
+
+<!-- AI Chat Interface Container -->
+<div id="ai-chat-container" class="ai-chat-window hidden">
+  <div class="ai-chat-header">
+    <h3>DKMT AI Assistant</h3>
+    <button class="close-chat-btn" onclick="toggleAIChat()">×</button>
+  </div>
+  
+  <!-- Chat Messages Display Area -->
+  <div id="ai-chat-messages" class="ai-chat-body">
+    <div class="message system-msg">
+      Hello employee! I can help you monitor mismatches, trace extraction failures, or review manual escalation logs. What do you need?
+    </div>
+  </div>
+  
+  <!-- Chat Input Action Area -->
+  <div class="ai-chat-footer">
+    <input type="text" id="ai-user-input" placeholder="Ask about shipment discrepancies..." onkeydown="if(event.key === 'Enter') sendAIMessage()">
+    <button onclick="sendAIMessage()">Send</button>
+  </div>
+</div>
+
+<!--script for AI helper-->
+<script>
+    // Toggles the visibility of the UI chat pop-up container
+function toggleAIChat() {
+  const chatContainer = document.getElementById('ai-chat-container');
+  chatContainer.classList.toggle('hidden');
+  
+  // Auto-scroll window to bottom when opened
+  if (!chatContainer.classList.contains('hidden')) {
+    const messageBody = document.getElementById('ai-chat-messages');
+    messageBody.scrollTop = messageBody.scrollHeight;
+  }
+}
+
+// Appends user text messages dynamically to the UI log
+function sendAIMessage() {
+  const inputEl = document.getElementById('ai-user-input');
+  const text = inputEl.value.trim();
+  
+  if (!text) return;
+  
+  const messageBody = document.getElementById('ai-chat-messages');
+  
+  // Create User Message Element
+  const userDiv = document.createElement('div');
+  userDiv.className = 'message user-msg';
+  userDiv.textContent = text;
+  messageBody.appendChild(userDiv);
+  
+  // Clear Input Box
+  inputEl.value = '';
+  
+  // Smooth scroll down to view new message
+  messageBody.scrollTop = messageBody.scrollHeight;
+  
+  // Simulating a quick automated response placeholder for the demo
+  setTimeout(() => {
+    const responseDiv = document.createElement('div');
+    responseDiv.className = 'message system-msg';
+    responseDiv.textContent = "Processing pipeline request... I can see that Shipment #67890 currently contains an unresolved container count mismatch.";
+    messageBody.appendChild(responseDiv);
+    messageBody.scrollTop = messageBody.scrollHeight;
+  }, 1000);
+}
+
+</script>
+
+<script>
+    function verifySession() {
+        const sessionUser = localStorage.getItem('currentSessionUser');
+        if (!sessionUser) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const match = users.find(u => u.username.toLowerCase() === sessionUser.toLowerCase());
+
+        if (!match) {
+            alert('Your active account session has been dissolved by the Admin.');
+            localStorage.removeItem('currentSessionUser');
+            window.location.href = 'login.html';
+            return;
+        }
+
+        document.getElementById('p-user').textContent = match.username;
+        document.getElementById('p-email').textContent = match.email;
+        document.getElementById('greet').textContent = `Welcome, ${match.username}!`;
+        document.getElementById('avatar').textContent = match.username.charAt(0).toUpperCase();
+    }
+
+    function goToEditPage() {
+        window.location.href = 'edit.html';
+    }
+
+    function logout() {
+        localStorage.removeItem('currentSessionUser');
+        window.location.href = 'login.html';
+    }
+
+    verifySession();
+    setInterval(verifySession, 2000); 
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+From: buyer2@company.com
+To: ops-inbox@company.com
+Subject: Discrepancy check needed - Shipment #67890
+Date: Sun, 20 Sep 2026 08:16:22 +0800
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============2393396109805838036=="
+
+--===============2393396109805838036==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Please verify the shipping instruction against the bill of lading.
+
+--===============2393396109805838036==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="SI.txt"
+MIME-Version: 1.0
+
+U2hpcHBlcjogQUJDIFRyYWRpbmcgQ28KQ29uc2lnbmVlOiBYWVogSW1wb3J0IEx0ZApOb3RpZnkg
+UGFydHk6IFhZWiBJbXBvcnQgTHRkClBvcnQgb2YgTG9hZGluZzogUG9ydCBLbGFuZwpQb3J0IG9m
+IERpc2NoYXJnZTogUm90dGVyZGFtCkNvbnRhaW5lciBDb3VudDogMwpHcm9zcyBXZWlnaHQgKGtn
+KTogMjIwMDAK
+
+--===============2393396109805838036==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="BL.txt"
+MIME-Version: 1.0
+
+U2hpcHBlcjogQUJDIFRyYWRpbmcgQ28KQ29uc2lnbmVlOiBYWVogSW1wb3J0IEx0ZApOb3RpZnkg
+UGFydHk6IFhZWiBJbXBvcnQgTHRkClBvcnQgb2YgTG9hZGluZzogUG9ydCBLbGFuZwpQb3J0IG9m
+IERpc2NoYXJnZTogUm90dGVyZGFtCkNvbnRhaW5lciBDb3VudDogNApHcm9zcyBXZWlnaHQgKGtn
+KTogMjIwMDAK
+
+--===============2393396109805838036==--

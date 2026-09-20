@@ -1,0 +1,31 @@
+From: confused_client@company.com
+To: ops-inbox@company.com
+Subject: Please compare documents for shipment
+Date: Sun, 20 Sep 2026 08:16:22 +0800
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============1260682939959617706=="
+
+--===============1260682939959617706==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+
+Attached are the documents, please check bill of lading and si.
+
+--===============1260682939959617706==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="weird_file.txt"
+MIME-Version: 1.0
+
+VGhpcyBkb2N1bWVudCBpcyBhbGwgb3ZlciB0aGUgcGxhY2UsIHRoZXJlJ3Mgbm8gc3RhbmRhcmQg
+a2V5OiB2YWx1ZSBmb3JtYXQuIEp1c3Qgd3JpdGUgc29tZXRoaW5nIHJhbmRvbWx5Lg==
+
+--===============1260682939959617706==
+Content-Type: text/plain
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="another_file.txt"
+MIME-Version: 1.0
+
+QkwgYXR0YWNobWVudCBtaXNzaW5nIHJlcXVpcmVkIGZpZWxkcw==
+
+--===============1260682939959617706==--
