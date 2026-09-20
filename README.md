@@ -3,6 +3,16 @@
 https://averis-hackathon-divided-kmt.vercel.app/
 
 
+
+# Demo Account
+
+You may use this account to sign in:
+
+username: user1
+
+password: user1^^^
+
+
 If you decided to review the codes and run it locally, follow the following steps ↓
 
 # DKMT — AI Summary in the chat box
